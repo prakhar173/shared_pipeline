@@ -1,3 +1,11 @@
+
+
+// vars/pipeline.groovy
+def call() {
+    echo "This is the shared pipeline!"
+    // Add any custom logic you need for the pipeline here
+
+
 pipeline {
     agent any
 
@@ -49,4 +57,5 @@ pipeline {
             echo "Pipeline completed for ${params.APP_NAME}"
         }
     }
+}
 }
