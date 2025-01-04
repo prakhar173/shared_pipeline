@@ -1,3 +1,13 @@
-def func_from_module_1() {
-    echo "Hello from the shared pipeline!"
+def call() {
+    pipeline {
+        agent any
+
+        stages {
+            stage('Example Stage') {
+                steps {
+                    echo 'Hello from the shared library pipeline!'
+                }
+            }
+        }
+    }
 }
