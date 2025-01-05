@@ -1,7 +1,9 @@
 def call() {
     pipeline {
         agent any
-
+    tools {
+        maven 'maven'  // Make sure this name matches what you have configured in Jenkins
+    }
         stages {
 
            stage('Checkout') {
