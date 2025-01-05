@@ -43,6 +43,9 @@ def call() {
 def buildProject() {
     echo 'Building the project...'
     // Add build logic here
+    def mvnHome = tool 'maven'
+    // Run Maven clean and package commands
+    bat "mvn clean package"  
 }
 
 def runTests() {
