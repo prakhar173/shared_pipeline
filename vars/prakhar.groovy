@@ -66,7 +66,7 @@ def buildProject() {
     // Add build logic here
     def mvnHome = tool 'maven'
     // Run Maven clean and package commands
-    bat "mvn clean package"  
+    sh "mvn clean package"  
 }
 
 def runTests() {
