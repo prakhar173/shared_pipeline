@@ -1,16 +1,68 @@
 def call() {
-                    echo 'Hello from the shared library pipeline!'    
-   parameters {
-        string(name: 'BRANCH', defaultValue: 'master', description: 'Branch to build')
-    }
-    environment {
-        GITHUB_REPO = 'https://github.com/prakhar173/Devops-Assignment-2023mt93305.git'
-    }
-    stages {
-        stage('Example') {
-            steps {
-                echo 'Hello World'
+    pipeline {
+        agent any
+
+        stages {
+            stage('Build') {
+                steps {
+                    script {
+                        buildProject()
+                    }
+                }
+            }
+            stage('Test') {
+                steps {
+                    script {
+                        runTests()
+                    }
+                }
+            }
+            stage('Deploy') {
+                steps {
+                    script {
+                        deployApplication()
+                    }
+                }
+            }
+        }
+
+        post {
+            always {
+                cleanup()
+            }
+            success {
+                notifySuccess()
+            }
+            failure {
+                notifyFailure()
             }
         }
     }
+}
+
+def buildProject() {
+    echo 'Building the project...'
+    // Add build logic here
+}
+
+def runTests() {
+    echo 'Running tests...'
+    // Add test logic here
+}
+
+def deployApplication() {
+    echo 'Deploying the application...'
+    // Add deployment logic here
+}
+
+def cleanup() {
+    echo 'Cleaning up workspace...'
+}
+
+def notifySuccess() {
+    echo 'Pipeline completed successfully!'
+}
+
+def notifyFailure() {
+    echo 'Pipeline failed!'
 }
