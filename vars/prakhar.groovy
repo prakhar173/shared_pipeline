@@ -69,7 +69,8 @@ def buildProject() {
     def mvnHome = tool 'maven'
     // Run Maven clean and package commands
     sh 'ls -al'
-    sh "mvn clean package"  
+    sh "mvn clean package" 
+    sh 'docker build -t my-java-app:latest .'
 }
 
 def runTests() {
