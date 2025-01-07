@@ -55,7 +55,7 @@ def checkoutSource() {
     echo 'Checking out the source code...'
     checkout([
         $class: 'GitSCM',
-        branches: [[name: '*/main']], // Replace 'main' with your branch name
+        branches: [[name: '*/master']], // Replace 'main' with your branch name
         userRemoteConfigs: [[
             url: 'https://github.com/prakhar173/Devops-Assignment-2023mt93305.git', // Replace with your repo URL
             credentialsId: 'fcf40809-39c9-4bdc-9d11-597c70edda29' // Replace with Jenkins credentials ID
