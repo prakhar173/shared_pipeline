@@ -68,6 +68,7 @@ def buildProject() {
     // Add build logic here
     def mvnHome = tool 'maven'
     // Run Maven clean and package commands
+    sh 'ls -al'
     sh "mvn clean package"  
 }
 
