@@ -72,14 +72,16 @@ def buildProject() {
     sh "mvn clean package" 
     sh 'docker build -t my-java-app:latest .'
 
-                       withCredentials([usernamePassword(credentialsId: 'c99b9d7c-35a5-48be-9c8c-6a9f2ee38ee5', passwordVariable: 'dockerhubpasswd')]) {
-                        sh '''
-                        docker login -u abhishekroshanregistry -p $dockerhubpasswd
-                        docker build -t my-java-app:latest .
-                        docker tag my-java-app:latest abhishekroshanregistry/my-java-app:latest
-                        docker push abhishekroshanregistry/my-java-app:latest
-                        '''
-}
+ withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', 
+                                   usernameVariable: 'DOCKER_USER', 
+                                   passwordVariable: 'DOCKER_PASS')]) {
+                            sh '''
+                                echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                                docker build -t $DOCKER_IMAGE .
+                                docker tag $DOCKER_IMAGE $DOCKER_USER/$DOCKER_IMAGE
+                                docker push $DOCKER_USER/$DOCKER_IMAGE
+                            '''
+               }
 }
 def runTests() {
     echo 'Running tests...'
