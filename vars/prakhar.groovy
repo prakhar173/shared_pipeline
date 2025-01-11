@@ -71,6 +71,14 @@ def buildProject() {
     sh 'ls -al'
     sh "mvn clean package" 
     sh 'docker build -t my-java-app:latest .'
+
+                       withCredentials([usernamePassword(credentialsId: 'c99b9d7c-35a5-48be-9c8c-6a9f2ee38ee5', passwordVariable: 'dockerhubpasswd')]) {
+                        sh '''
+                        docker login -u abhishekroshanregistry -p $dockerhubpasswd
+                        docker build -t my-java-app:latest .
+                        docker tag my-java-app:latest abhishekroshanregistry/my-java-app:latest
+                        docker push abhishekroshanregistry/my-java-app:latest
+                        '''
 }
 
 def runTests() {
