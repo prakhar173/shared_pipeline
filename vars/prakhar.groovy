@@ -80,7 +80,7 @@ def buildProject() {
                         docker push abhishekroshanregistry/my-java-app:latest
                         '''
 }
-
+}
 def runTests() {
     echo 'Running tests...'
     // Add test logic here
