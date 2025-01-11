@@ -72,7 +72,7 @@ def buildProject() {
     sh "mvn clean package" 
     sh 'docker build -t my-java-app:latest .'
 
- withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', 
+ withCredentials([usernamePassword(credentialsId: 'c99b9d7c-35a5-48be-9c8c-6a9f2ee38ee5', 
                                    usernameVariable: 'DOCKER_USER', 
                                    passwordVariable: 'DOCKER_PASS')]) {
                             sh '''
