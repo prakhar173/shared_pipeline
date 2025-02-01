@@ -58,7 +58,7 @@ def checkoutSource() {
         branches: [[name: '*/master']], // Replace 'main' with your branch name
         userRemoteConfigs: [[
             url: 'https://github.com/prakhar173/Devops-Assignment-2023mt93305.git', // Replace with your repo URL
-            credentialsId: '5d9ba77a-0db4-4cb2-8708-272f5f035762' // Replace with Jenkins credentials ID
+            credentialsId: 'c99b9d7c-35a5-48be-9c8c-6a9f2ee38ee5' // Replace with Jenkins credentials ID
         ]]
     ])
 }
@@ -72,7 +72,7 @@ def buildProject() {
     sh "mvn clean package" 
     // sh 'docker build -t my-java-app:latest .'
 
- withCredentials([usernamePassword(credentialsId: 'c99b9d7c-35a5-48be-9c8c-6a9f2ee38ee5', 
+ withCredentials([usernamePassword(credentialsId: '4bbeeeeb-a2e4-4f57-955c-3f23a5deb264', 
                                    usernameVariable: 'DOCKER_USER', 
                                    passwordVariable: 'DOCKER_PASS')]) {
                             sh '''
