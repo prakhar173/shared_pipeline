@@ -1,6 +1,14 @@
 def call() {
     pipeline {
         agent any
+        
+  environment {
+        GCP_PROJECT = 'mygkecluster-451015'
+        GKE_CLUSTER = 'autopilot-cluster-1'
+        GKE_REGION  = 'us-central1'
+        NAMESPACE   = 'dev01'
+        GCP_CREDENTIALS = credentials('gcp-key') // Stored in Jenkins credentials
+    }        
     tools {
         maven 'maven'  // Make sure this name matches what you have configured in Jenkins
     }
@@ -27,6 +35,18 @@ def call() {
                     }
                 }
             }
+            
+    stage('Authenticate to GCP') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                        sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                        sh 'gcloud config set project $GCP_PROJECT'
+                    }
+                }
+            }
+        }
+
             stage('Deploy') {
                 steps {
                     script {
@@ -90,7 +110,9 @@ def runTests() {
 
 def deployApplication() {
     echo 'Deploying the application...'
+    
     // Add deployment logic here
+    
 }
 
 def cleanup() {
