@@ -8,8 +8,9 @@ def call() {
         GKE_REGION  = 'us-central1'
         NAMESPACE   = 'dev01'
         GCP_CREDENTIALS = credentials('gcp-key') // Stored in Jenkins credentials
-        REGISTRY_NAME   = 'my-docker-repo'            // Name of the GCR repository
-        IMAGE_NAME      = "gcr.io/$GCP_PROJECT/$REGISTRY_NAME/my-java-app"
+        REGISTRY        = 'us-central1-docker.pkg.dev'                 // Google Artifact Registry URL
+        REPO_NAME       = 'my-docker-repo'                             // Artifact Registry name
+        IMAGE_NAME      = "${REGISTRY}/${GCP_PROJECT}/${REPO_NAME}/my-java-app"
     }        
     tools {
         maven 'maven'  // Make sure this name matches what you have configured in Jenkins
@@ -29,30 +30,7 @@ def call() {
                     withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                         sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
                         sh 'gcloud config set project $GCP_PROJECT'
-                        sh 'gcloud auth configure-docker gcr.io'
-                    }
-                }
-            }
-        }
-
-    stage('Ensure Artifact Registry Exists') {
-            steps {
-                script {
-                    def registryExists = sh(script: """
-                        gcloud artifacts repositories list --location=us-central1 --format='value(name)' | grep '^${env.REGISTRY_NAME}$' || echo ''
-                    """, returnStdout: true).trim()
-
-
-                    if (!registryExists) {
-                        echo "🛠️ Creating Artifact Registry '$REGISTRY_NAME'..."
-                        sh """
-                        gcloud artifacts repositories create $REGISTRY_NAME \
-                            --repository-format=docker \
-                            --location=us-central1 \
-                            --description="Docker repository for GKE"
-                        """
-                    } else {
-                        echo "✅ Artifact Registry '$REGISTRY_NAME' already exists."
+                        sh 'gcloud auth configure-docker $REGISTRY'
                     }
                 }
             }
@@ -118,12 +96,14 @@ def buildProject() {
     // Run Maven clean and package commands
     sh 'ls -al'
     sh "mvn clean package" 
+    
     // sh 'docker build -t my-java-app:latest .'
                   sh """
                     docker build -t $IMAGE_NAME:latest .
                     docker tag $IMAGE_NAME:latest $IMAGE_NAME:\$(date +%Y%m%d%H%M%S)
                     docker push $IMAGE_NAME:latest
                     """
+    
  withCredentials([usernamePassword(credentialsId: '4bbeeeeb-a2e4-4f57-955c-3f23a5deb264', 
                                    usernameVariable: 'DOCKER_USER', 
                                    passwordVariable: 'DOCKER_PASS')]) {
