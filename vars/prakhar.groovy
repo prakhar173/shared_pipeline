@@ -27,6 +27,7 @@ def call() {
                     withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                         sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
                         sh 'gcloud config set project $GCP_PROJECT'
+                        sh 'gcloud auth configure-docker gcr.io'
                     }
                 }
             }
