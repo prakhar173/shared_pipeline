@@ -92,6 +92,11 @@ def buildProject() {
     sh "mvn clean package" 
     // sh 'docker build -t my-java-app:latest .'
 
+                    sh """
+                    docker build -t my-java-app:latest .    
+                    gcloud auth configure-docker
+                    docker push my-java-app:latest
+                    """
  withCredentials([usernamePassword(credentialsId: '4bbeeeeb-a2e4-4f57-955c-3f23a5deb264', 
                                    usernameVariable: 'DOCKER_USER', 
                                    passwordVariable: 'DOCKER_PASS')]) {
