@@ -21,6 +21,16 @@ def call() {
                     }
                 }
             }
+        stage('Authenticate to GCP') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                        sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                        sh 'gcloud config set project $GCP_PROJECT'
+                    }
+                }
+            }
+        }
             stage('Build') {
                 steps {
                     script {
@@ -36,16 +46,7 @@ def call() {
                 }
             }
             
-    stage('Authenticate to GCP') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                        sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
-                        sh 'gcloud config set project $GCP_PROJECT'
-                    }
-                }
-            }
-        }
+
 
             stage('Deploy') {
                 steps {
