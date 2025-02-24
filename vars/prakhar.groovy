@@ -8,6 +8,8 @@ def call() {
         GKE_REGION  = 'us-central1'
         NAMESPACE   = 'dev01'
         GCP_CREDENTIALS = credentials('gcp-key') // Stored in Jenkins credentials
+        REGISTRY_NAME   = 'my-docker-repo'            // Name of the GCR repository
+        IMAGE_NAME      = "gcr.io/$GCP_PROJECT/$REGISTRY_NAME/my-java-app"
     }        
     tools {
         maven 'maven'  // Make sure this name matches what you have configured in Jenkins
@@ -32,6 +34,29 @@ def call() {
                 }
             }
         }
+
+    stage('Ensure Artifact Registry Exists') {
+            steps {
+                script {
+                    def registryExists = sh(script: """
+                        gcloud artifacts repositories list --location=us-central1 --format='value(name)' | grep '^$REGISTRY_NAME$' || echo ''
+                    """, returnStdout: true).trim()
+
+                    if (!registryExists) {
+                        echo "🛠️ Creating Artifact Registry '$REGISTRY_NAME'..."
+                        sh """
+                        gcloud artifacts repositories create $REGISTRY_NAME \
+                            --repository-format=docker \
+                            --location=us-central1 \
+                            --description="Docker repository for GKE"
+                        """
+                    } else {
+                        echo "✅ Artifact Registry '$REGISTRY_NAME' already exists."
+                    }
+                }
+            }
+        }
+            
             stage('Build') {
                 steps {
                     script {
@@ -93,11 +118,10 @@ def buildProject() {
     sh 'ls -al'
     sh "mvn clean package" 
     // sh 'docker build -t my-java-app:latest .'
-
-                    sh """
-                    docker build -t gcr.io/$GCP_PROJECT/my-java-app .    
-                    gcloud auth configure-docker
-                    docker push gcr.io/$GCP_PROJECT/my-java-app
+                  sh """
+                    docker build -t $IMAGE_NAME:latest .
+                    docker tag $IMAGE_NAME:latest $IMAGE_NAME:\$(date +%Y%m%d%H%M%S)
+                    docker push $IMAGE_NAME:latest
                     """
  withCredentials([usernamePassword(credentialsId: '4bbeeeeb-a2e4-4f57-955c-3f23a5deb264', 
                                    usernameVariable: 'DOCKER_USER', 
