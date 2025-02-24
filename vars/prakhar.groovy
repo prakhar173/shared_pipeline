@@ -94,9 +94,9 @@ def buildProject() {
     // sh 'docker build -t my-java-app:latest .'
 
                     sh """
-                    docker build -t my-java-app:latest .    
+                    docker build -t gcr.io/$GCP_PROJECT/my-java-app .    
                     gcloud auth configure-docker
-                    docker push my-java-app:latest
+                    docker push gcr.io/$GCP_PROJECT/my-java-app
                     """
  withCredentials([usernamePassword(credentialsId: '4bbeeeeb-a2e4-4f57-955c-3f23a5deb264', 
                                    usernameVariable: 'DOCKER_USER', 
