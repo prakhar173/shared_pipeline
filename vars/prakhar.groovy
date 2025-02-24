@@ -39,8 +39,9 @@ def call() {
             steps {
                 script {
                     def registryExists = sh(script: """
-                        gcloud artifacts repositories list --location=us-central1 --format='value(name)' | grep '^$REGISTRY_NAME$' || echo ''
+                        gcloud artifacts repositories list --location=us-central1 --format='value(name)' | grep '^${env.REGISTRY_NAME}$' || echo ''
                     """, returnStdout: true).trim()
+
 
                     if (!registryExists) {
                         echo "🛠️ Creating Artifact Registry '$REGISTRY_NAME'..."
